@@ -8,6 +8,8 @@
   - [作用](#SSL)
   - [时序图 与 引发问题](#时序图)
   - [过程](#过程)
+- [nginx](#nginx)
+  - [配置](#nginx)
 
 
 ---
@@ -88,8 +90,6 @@ http://blog.csdn.net/u013424496/article/details/51161370 的一段话
 >我们"ABC Company"申请到这个证书后，我们把证书投入使用，我们在通信过程开始时会把证书发给对方，对方如何检查这个证书的确是合法的并且是我们"ABC Company"公司的证书呢？首先应用程序(对方通信用的程序，例如IE、OUTLook等)读取证书中的Issuer(发布机构)为"SecureTrust CA" ，然后会在操作系统中受信任的发布机构的证书中去找"SecureTrust CA"的证书，如果找不到，那说明证书的发布机构是个水货发布机构，证书可能有问题，程序会给出一个错误信息。 如果在系统中找到了"SecureTrust CA"的证书，那么应用程序就会从证书中取出"SecureTrust CA"的公钥，然后对我们"ABC Company"公司的证书里面的指纹和指纹算法用这个公钥进行解密，然后使用这个指纹算法计算"ABC Company"证书的指纹，将这个计算的指纹与放在证书中的指纹对比，如果一致，说明"ABC Company"的证书肯定没有被修改过并且证书是"SecureTrust CA" 发布的，证书中的公钥肯定是"ABC Company"的。对方然后就可以放心的使用这个公钥和我们"ABC Company"进行通信了。
 
 
-
-
 正确的是这样
 
 ![s5](./svg/s5.svg)
@@ -98,4 +98,51 @@ http://blog.csdn.net/u013424496/article/details/51161370 的一段话
 
 ![s6](./svg/s6.svg)
 
-(待续...)
+###nginx
+参考阿里云 ca 证书文档：https://help.aliyun.com/knowledge_detail/42218.html
+
+执行命令
+```shell
+openssl req -new -nodes -sha256 -newkey rsa:2048 -keyout myprivate.key -out mydomain.csr
+```
+生成 CSR 文件。
+**CSR 是证书请求文件 ，里面涵盖了用户的信息（包括我自己本身公钥，看上述命令就知道，csr是根据myprivate.key生成的）**
+把这个上传到阿里云的ca证书（前提是买了一个），然后审核通过后便可以下载证书
+下面是nginx 配置(拷贝于阿里云文档)
+```shell
+server {
+    listen 443;
+    server_name localhost;
+    ssl on;
+    root html;
+    index index.html index.htm;
+    ssl_certificate   cert/xxx.pem;
+    ssl_certificate_key  cert/xxx.key;
+    ssl_session_timeout 5m;
+    ssl_ciphers ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_prefer_server_ciphers on;
+    location / {
+        root html;
+        index index.html index.htm;
+    }
+}
+```
+
+**还有就是https 要比 http 造成更大的负载压力**
+原因是 http使用TCP 三次握手建立连接，客户端和服务器需要交换3个包，https除了 TCP 的三个包，还要加上 ssl握手需要的9个包，所以一共是12个包
+HTTPS 要比 HTTP 多用多少服务器资源？https://www.zhihu.com/question/21518760（知乎）
+所以一般在安全级别比较高的页面才会采用https，如登录，支付等，这些可以在80端口的https重定向到443的https
+如
+```$xslt
+# 登录页面
+if ($uri ~* "/login.php$")
+{
+    rewrite ^/(.*)$ https://$host/$1 redirect;
+}
+# 交易页面
+if ($uri ~* "/pay.php$")
+{
+    rewrite ^/(.*)$ https://$host/$1 redirect;
+}
+```
