@@ -1,0 +1,28 @@
+{
+    "name": "Jimb55/Exper/pattern",
+    "description": "The Exper pattern Framework.",
+    "keywords": ["Jimb55", "Exper", "pattern"],
+    "license": "MIT",
+    "type": "project",
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~6.0"
+    },
+    "autoload": {
+        "classmap": [
+            "lib",
+            "app"
+        ],
+        "psr-4": {
+            "lib\\": "lib/",
+            "app\\": "app/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    }
+}
