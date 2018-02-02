@@ -1,6 +1,5 @@
 <?php
 require 'vendor/autoload.php';
 
-use app\DB;
-
-var_dump(DB::Write("hello world!!!"));
+use app\Facades\DBFacade;
+DBFacade::Write("hello world!!!");

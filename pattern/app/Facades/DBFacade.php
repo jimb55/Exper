@@ -1,7 +1,7 @@
 <?php
 namespace app\Facades;
 
-class DBFacades extends \lib\Facade\Facade{
+class DBFacade extends \lib\Facade\Facade{
     public static function getFacadeAccessor(){
         return \app\DB::class;
     }
