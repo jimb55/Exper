@@ -33,4 +33,5 @@ if($redis->hSet("hash_user_$id", "name","jimb55") !== false){
     print_r($data);
 }
 
+//D:/curl/curl.exe http://172.16.47.129/Exper/redis/hash.php
 
