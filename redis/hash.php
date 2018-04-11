@@ -6,6 +6,12 @@ $redis = new Redis();
 $res = $redis->connect('127.0.0.1', 6379);
 $redis->auth('jimb55');
 
+/**
+ * 场景一，比如要缓存用户信息，或产品信息啊，公司信息啊，订单信息啊之类的，可以用hash
+ * 若果用其他，如string 得转换json，且不便于修改某个单一字段
+ */
+
+
 //某操作要查找 ID 为 13 的 user 信息
 $id = 11;
 $data = [];
