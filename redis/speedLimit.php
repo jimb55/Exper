@@ -7,10 +7,12 @@ $res = $redis->connect('127.0.0.1', 6379);
 $redis->auth('jimb55');
 
 /**
+ * string 原子计数器
+ *
  * 场景二，（用浏览访问）限制用户访问频率,当然这是可以破解的，禁止cookie就行，用IP 也不靠谱，只能一定程度上限流
  */
 
-$cookieTime = 3600;
+$cookieTime = 10;
 
 //复原SESSION ID
 if(key_exists("session_id",$_COOKIE)){
@@ -21,12 +23,14 @@ if(key_exists("session_id",$_COOKIE)){
     setcookie('session_id', session_id(),time() + $cookieTime);
 }
 
-
+$yuqi = "";
 if(key_exists("test",$_COOKIE)){
     print_r("cookie里面有值，值为：".$_COOKIE["test"]);
+    $yuqi = $_COOKIE["test"];
 //    print_r(" -- PHPSESSID里面有值，值为：".$_COOKIE["PHPSESSID"]);
 }else{
-    setcookie('test', "123",time() + $cookieTime);
+    $yuqi = 'test_'.uniqid();
+    setcookie('test', $yuqi,time() + $cookieTime);
     print_r("cookie里面没有值");
 }
 
@@ -47,23 +51,15 @@ if(key_exists("test2",$_SESSION)){
     print_r("session里面没有值");
 }
 
+$redis ->incr("string_speed_".$yuqi);
+$num = $redis -> get("string_speed_".$yuqi);
+if($num == 1){
+    $redis -> expire("string_speed_".$yuqi,10);
+}else if($num >2){
+    echo "<br />十秒内最多访问2次";exit();
+}
+echo "<br />访问通过!!!";
 
-//
-////Redis键值
-//$keyName = Yii::app()->request->userHostAddress . '-' . $apiKey;
-////初始化接口访问频次
-//if (Yii::app()->redis->get($apiRunCountKey) === false) {
-//    Yii::app()->redis->setex(
-//        $apiRunCountKey,
-//        self::$RateLimitTime,
-//        self::$RateLimitCount
-//    );
-//}
-////获取当前可执行的频次
-//$currentApiCount = Yii::app()->redis->decr($apiRunCountKey);
-//
-//if ($currentApiCount < 0) {
-//    Yii::log($apiRunCountKey, 'info', 'webadmin.cms.api.rate');
-//    return false;
-//}
-//return true;
+
+
+//http://172.16.47.129/Exper/redis/speedLimit.php
