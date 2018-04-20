@@ -27,6 +27,7 @@ kill `cat pid`
 rm pid log
 else
 echo "NOT FIND ACTION $insert_a !";
+exit
 fi
 
 sleep 1

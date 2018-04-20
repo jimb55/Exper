@@ -18,6 +18,7 @@ abstract class listab
      * 数据整理
      */
     public function action($data){
+        sleep(5);
         $this -> run($data);
     }
 }
