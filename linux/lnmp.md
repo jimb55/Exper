@@ -74,3 +74,78 @@ make && make install
 这步失败基本上就是上面的没有成功执行引起，仔细检测上面的`./configure`操作
 
 
+
+
+
+###安装 nginx-1.13.12
+依然是`./configure` make make install
+```
+#可能遇到
+./configure: error: the HTTP rewrite module requires the PCRE library.
+You can either disable the module by using --without-http_rewrite_module
+option, or install the PCRE library into the system, or build the PCRE library
+statically from the source with nginx by using --with-pcre=<path> option.
+```
+
+pcre pcre-devel
+```
+# yum search pcre              
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+=================================================================================== N/S matched: pcre ====================================================================================
+ghc-pcre-light-devel.x86_64 : Haskell pcre-light library development files
+mingw32-pcre.noarch : MinGW Windows pcre library
+mingw32-pcre-static.noarch : Static version of the mingw32-pcre library
+mingw64-pcre.noarch : MinGW Windows pcre library
+mingw64-pcre-static.noarch : Static version of the mingw64-pcre library
+pcre-devel.i686 : Development files for pcre
+pcre-devel.x86_64 : Development files for pcre
+pcre-static.i686 : Static library for pcre
+pcre-static.x86_64 : Static library for pcre
+pcre-tools.x86_64 : Auxiliary utilities for pcre
+pcre2-devel.i686 : Development files for pcre2
+pcre2-devel.x86_64 : Development files for pcre2
+pcre2-static.i686 : Static library for pcre2
+pcre2-static.x86_64 : Static library for pcre2
+pcre2-tools.x86_64 : Auxiliary utilities for pcre2
+pcre2-utf16.i686 : UTF-16 variant of PCRE2
+pcre2-utf16.x86_64 : UTF-16 variant of PCRE2
+pcre2-utf32.i686 : UTF-32 variant of PCRE2
+pcre2-utf32.x86_64 : UTF-32 variant of PCRE2
+ghc-pcre-light.x86_64 : Perl5 compatible regular expression library
+opensips-regex.x86_64 : RegExp via PCRE library
+pcre.i686 : Perl-compatible regular expression library
+pcre.x86_64 : Perl-compatible regular expression library
+pcre2.i686 : Perl-compatible regular expression library
+pcre2.x86_64 : Perl-compatible regular expression library
+
+  Name and summary matches only, use "search all" for everything.
+```
+直接安装即可
+
+
+nginx 在编译安装时能添加许多包，如 ./configure --with-debug ,就是能打开debug模式，能够在log 上输出请求这整个过程
+输出由 http 到 server 到location的生命周期发生的日志，包括参数等
+
+with-pcre-jit   --用于pcre的动态编译，听说动态编译可以省去静态资源的选择语句的时间，安装了正则表达式会快点，./configure的时候追加
+
+
+with-ipv6 能够监听ip6 的地址，listen ip4:port => listen ip6:port https://blog.csdn.net/jmingbh/article/details/69388647
+with-http_ssl_module 能够开启ssl 支持，即https
+with-http_stub_status_module 能够开启nginx监听 https://www.cnblogs.com/94cool/p/3872492.html
+with-http_realip_module 获取真实IP 尤其是经过代理啊，负载均衡之类 的 https://blog.csdn.net/cscrazybing/article/details/50789234
+with-http_auth_request_module 认证，复习 https://www.cnblogs.com/wangxiaoqiangs/p/6184181.html
+with-http_addition_module 响应之前或者之后追加文本内容 http://www.ttlsa.com/linux/nginx-modules-ngx_http_addition_module/
+with-http_dav_module  启用ngx_http_dav_module支持（增加PUT,DELETE,MKCOL：创建集合,COPY和MOVE方法）默认情况下为关闭，需编译开启
+with-http_geoip_module 针对地区访问控制 http://ju.outofmemory.cn/entry/16264
+with-http_gunzip_module  为不支持“gzip”编码方式的客户端解压缩头部包含“Content-Encoding: gzip”响应的过滤器。https://blog.lyz810.com/article/2016/05/ngx_http_gunzip_module_doc_zh-cn/
+with-http_gzip_static_module 解压缩头部包
+with-http_image_filter_module 来裁剪图片 https://blog.csdn.net/revitalizing/article/details/52714198
+with-http_v2_module  
+with-http_sub_module 它修改网站响应内容中的字符串 http://www.ttlsa.com/linux/nginx-modules-ngx_http_sub_module/
+with-http_xslt_module 启用ngx_http_xslt_module支持 http://www.ttlsa.com/nginx/nginx-configure-descriptions/
+with-stream 负载均衡 https://blog.csdn.net/zhiyuan_2007/article/details/71238216
+with-stream_ssl_module  ssl负载均衡 
+with-mail 邮件
+with-mail_ssl_module 邮件ssl
+with-threads https://segmentfault.com/a/1190000002924458 !import
