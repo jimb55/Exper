@@ -11,8 +11,8 @@
   - [SSL](https://github.com/jimb55/Exper/tree/master/ssl#SSL)
   - [nginx配置ssl](https://github.com/jimb55/Exper/tree/master/ssl#nginx)
 - [系统](#)
-  - [进程与线程](https://github.com/jimb55/Exper/linux)
-  - [lnmp基础安装](https://github.com/jimb55/Exper/linux/lnmp.md)
+  - [进程与线程](https://github.com/jimb55/Exper/blob/master/linux/README.md)
+  - [lnmp基础安装](https://github.com/jimb55/Exper/blob/master/linux/lnmp.md)
   
   
 
