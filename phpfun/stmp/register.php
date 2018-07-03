@@ -21,4 +21,6 @@ if($mailer->send($to, $title, $message)){
 }else{
     echo "邮件发送失败";
 }
+
+// D:/curl/curl.exe http://172.16.47.129/Exper/phpfun/stmp/register.php
 ?>
