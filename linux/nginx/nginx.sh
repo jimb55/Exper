@@ -9,6 +9,9 @@ NGINX_FILE=${NGINX_VERSION_FILE}${NGINX_TAR_NAME}
 NGINX_DOWNLOAD_URL="http://nginx.org/download/"
 ROOT_PATH=`pwd`
 
+### 更新环境
+yum install pcre-devel pcre openssl openssl-devel wget -y
+
 ### 判断文件是否存在，不存在就下载
 if [ -f ${ROOT_PATH}/${NGINX_FILE} ];then
     echo "file exist !!!"
@@ -20,9 +23,6 @@ fi
 ### 解压并进入文件夹
 tar -zxvf ${NGINX_FILE}
 cd ${ROOT_PATH}/${NGINX_VERSION_FILE}
-
-### 更新环境
-yum install pcre-devel pcre openssl openssl-devel -y
 
 ### 更改版本号
 sed -i -e 's/1.12.0//g' -e 's/nginx\//JWS/g' -e 's/"NGINX"/"JWS"/g' src/core/nginx.h
